@@ -1,5 +1,9 @@
 # Mini SIEM
 
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-blue?logo=mitre&style=flat-square)
+![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python&style=flat-square)
+# Mini SIEM
+
 ![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-Credential%20Access-blue)
 
 A lightweight Security Information and Event Management (SIEM) system in Python.
