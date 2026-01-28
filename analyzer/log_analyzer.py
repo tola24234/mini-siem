@@ -1,5 +1,5 @@
-import re
 from collections import defaultdict
+from analyzer.mitre_mapping import MITRE_ATTACK
 
 LOG_FILE = "data/auth_logs.txt"
 THRESHOLD = 5
@@ -10,14 +10,15 @@ def analyze_logs():
     with open(LOG_FILE, "r", errors="ignore") as file:
         for line in file:
             if "Failed password" in line:
-                ip = re.findall(r"\d+\.\d+\.\d+\.\d+", line)
-                if ip:
-                    failed_attempts[ip[0]] += 1
+                ip = line.split("from")[1].split()[0]
+                failed_attempts[ip] += 1
 
-    return failed_attempts
-
-if __name__ == "__main__":
-    results = analyze_logs()
-    for ip, count in results.items():
+    results = {}
+    for ip, count in failed_attempts.items():
         if count >= THRESHOLD:
-            print(f"[!] Brute-force detected from {ip} ({count} attempts)")
+            results[ip] = {
+                "count": count,
+                "mitre": MITRE_ATTACK["SSH_BRUTE_FORCE"]
+            }
+
+    return results
