@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+git add .gitignore
+git commit -m "Add virtual environment ignore"
+git push

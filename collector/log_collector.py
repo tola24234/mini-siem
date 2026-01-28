@@ -1,22 +1,23 @@
-import shutil
 import os
-from datetime import datetime
+import shutil
 
-LOG_SOURCE = "/var/log/auth.log"
-DEST_FILE = "data/auth_logs.txt"
+LOG_PATHS = [
+    "/var/log/auth.log",
+    "/var/log/secure"
+]
+
+OUTPUT_FILE = "data/auth_logs.txt"
 
 def collect_logs():
     os.makedirs("data", exist_ok=True)
 
-    if not os.path.exists(LOG_SOURCE):
-        print("[!] auth.log not found")
-        return
+    for path in LOG_PATHS:
+        if os.path.exists(path):
+            shutil.copy(path, OUTPUT_FILE)
+            print(f"[+] Logs collected from {path}")
+            return
 
-    with open(DEST_FILE, "a") as f:
-        f.write(f"\n--- Logs collected at {datetime.now()} ---\n")
-
-    shutil.copy(LOG_SOURCE, DEST_FILE)
-    print("[+] Logs collected successfully")
+    print("[!] No authentication log found on this system")
 
 if __name__ == "__main__":
     collect_logs()
