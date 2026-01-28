@@ -28,6 +28,16 @@ python3 -m venv venv
 source venv/bin/activate
 This project includes a Flask-based web dashboard that visualizes detected security events.
 
+## 🚀 Run with Docker
+
+You can build and run the Mini SIEM project in a Docker container:
+
+```bash
+# Build the Docker image
+docker build -t mini-siem .
+
+# Run the container (maps port 5000)
+docker run -p 5000:5000 mini-siem
 ### Features
 - Displays suspicious IPs
 - Shows failed login attempts
