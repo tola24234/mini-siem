@@ -1,3 +1,8 @@
+# Mini SIEM
+
+![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-Credential%20Access-blue)
+
+A lightweight Security Information and Event Management (SIEM) system in Python.
 ## Skills Demonstrated
 - SIEM fundamentals (log ingestion, correlation, alerting)
 - MITRE ATT&CK threat mapping
