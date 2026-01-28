@@ -1,6 +1,40 @@
 ## Skills Demonstrated
 - SIEM fundamentals (log ingestion, correlation, alerting)
 - MITRE ATT&CK threat mapping
+# Mini SIEM 🛡️
+
+![Project Status](https://img.shields.io/badge/status-completed-brightgreen)
+
+A lightweight Security Information and Event Management (SIEM) system built in Python. It collects logs, analyzes them for failed login attempts, generates alerts, maps attacks to MITRE ATT&CK tactics, and displays results in a dashboard.
+
+---
+
+## Features
+If you want, I can write a polished README snippet including badges, screenshots, and instructions ready to send to a company.
+- Collects authentication logs from `/var/log/auth.log` or custom log files.
+- Detects brute-force login attempts and other suspicious activity.
+- Generates real-time alerts with IP blocking simulation.
+- MITRE ATT&CK mapping for detected attacks:
+  - **Tactic:** Credential Access  
+  - **Technique:** T1110 - Brute Force  
+  - **Sub-technique:** T1110.001 - Password Guessing
+- Dashboard accessible via web browser (Flask-based).
+- Easily extendable with custom log analyzers and rules.
+
+---
+
+## Dashboard Preview
+
+![Mini SIEM Dashboard](screenshots/dashboard.png)
+
+---
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/tola24234/mini-siem.git
+cd mini-siem/mini-siem
 - Python security automation
 - Flask web dashboards
 - Linux log analysis
