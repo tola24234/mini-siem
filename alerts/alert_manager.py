@@ -1,12 +1,13 @@
-ALERT_FILE = "data/alerts.log"
-BLOCK_FILE = "data/blocked_ips.txt"
+from datetime import datetime
 
-def write_alert(ip, count, mitre):
-    with open(ALERT_FILE, "a") as f:
-        f.write(f"{ip} failed {count} times - MITRE {mitre['technique_id']}\n")
-    print(f"Alert written for {ip}")
+def write_alert(ip: str, count: int, tactic: str = "Credential Access", technique: str = "T1110.001 - Password Guessing"):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    msg = f"[{timestamp}] ALERT: Potential brute-force from {ip} ({count} attempts) → {technique}"
+    print(msg)
+    with open("alerts.log", "a") as f:
+        f.write(msg + "\n")
 
-def block_ip(ip):
-    with open(BLOCK_FILE, "a") as f:
+def block_ip(ip: str):
+    print(f"[BLOCK] Simulated block for IP: {ip}")
+    with open("blocked_ips.txt", "a") as f:
         f.write(f"{ip}\n")
-    print(f"IP {ip} blocked (simulated)")
