@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://10.0.2.15:5000/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Mini SIEM Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+        th { background-color: #555; color: white; }
+        tr:nth-child(even) { background-color: #eee; }
+        .alert { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Mini SIEM Dashboard</h1>
+
+    <h2>Detected Malicious IPs</h2>
+    <table>
+        <tbody><tr>
+            <th>IP Address</th>
+            <th>Failed Attempts</th>
+            <th>Tactic</th>
+            <th>Technique</th>
+            <th>Sub-technique</th>
+        </tr>
+        
+        <tr>
+            <td>192.168.1.10</td>
+            <td>6</td>
+            <td>Credential Access</td>
+            <td>T1110</td>
+            <td>T1110.001 - Password Guessing</td>
+        </tr>
+        
+    </tbody></table>
+
+    <h2>Alerts</h2>
+    <ul>
+        
+        <li class="alert">192.168.1.10 failed 6 times</li>
+        
+    </ul>
+
+    <h2>Blocked IPs</h2>
+    <ul>
+        
+        <li>192.168.1.10</li>
+        
+    </ul>
+
+</body></html>

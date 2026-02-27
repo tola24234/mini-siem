@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini SIEM Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+        th { background-color: #555; color: white; }
+        tr:nth-child(even) { background-color: #eee; }
+        .alert { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Mini SIEM Dashboard</h1>
+
+    <h2>Detected Malicious IPs</h2>
+    <table>
+        <tr>
+            <th>IP Address</th>
+            <th>Failed Attempts</th>
+            <th>Tactic</th>
+            <th>Technique</th>
+            <th>Sub-technique</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            <td>{{ row.ip }}</td>
+            <td>{{ row.count }}</td>
+            <td>{{ row.tactic }}</td>
+            <td>{{ row.technique }}</td>
+            <td>{{ row.sub_technique }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Alerts</h2>
+    <ul>
+        {% for alert in alerts %}
+        <li class="alert">{{ alert }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Blocked IPs</h2>
+    <ul>
+        {% for ip in blocked_ips %}
+        <li>{{ ip }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
