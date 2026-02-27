@@ -3,7 +3,7 @@ import re
 import os
 from configparser import ConfigParser
 
-# MITRE fallback
+# MITRE ATT&CK mapping fallback
 MITRE_ATTACK = {
     "SSH_BRUTE_FORCE": {
         "tactic": "Credential Access",
@@ -12,30 +12,36 @@ MITRE_ATTACK = {
     }
 }
 
-# Alert functions
+# Alert functions with simulation fallback
 try:
     from alerts.alert_manager import write_alert, block_ip
 except ImportError:
     def write_alert(ip, count, tactic, sub_technique):
-        print(f"[ALERT] {ip} ({count} attempts) → {sub_technique}")
+        timestamp = os.popen('date +"%Y-%m-%d %H:%M:%S"').read().strip()
+        print(f"[{timestamp}] [ALERT SIM] {ip} ({count} attempts) → {sub_technique}")
     def block_ip(ip):
-        print(f"[BLOCK] Simulated block for {ip}")
+        print(f"[BLOCK SIM] Simulated firewall block for {ip}")
 
 def analyze_logs(log_file_path=None, threshold=None):
     """
-    Analyze logs - works on local + Render.com Docker
+    Analyze authentication logs for brute-force SSH attacks.
+    Works both locally and on Render.com (Docker).
     """
     config = ConfigParser()
     config.read("config.ini")
 
-    # Force correct path for Render (WORKDIR=/app)
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    default_log = "/app/data/auth_logs.txt"   # ← THIS IS THE KEY FIX
+    # Determine base path: /app on Render, project root locally
+    if os.getenv("RENDER"):  # Render sets this env var
+        base_dir = "/app"
+    else:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    default_log = os.path.join(base_dir, "data", "auth_logs.txt")
 
     if log_file_path is None:
         log_file_path = config.get("SIEM", "LOG_FILE", fallback=default_log)
 
-    print(f"[DEBUG] Attempting to read: {log_file_path}")
+    print(f"[DEBUG] Attempting to read log file: {log_file_path}")
 
     if threshold is None:
         threshold = config.getint("SIEM", "THRESHOLD", fallback=5)
@@ -47,28 +53,36 @@ def analyze_logs(log_file_path=None, threshold=None):
         with open(log_file_path, "r", encoding="utf-8", errors="ignore") as file:
             for line in file:
                 line = line.strip()
+                if not line:
+                    continue
                 if "Failed password" in line:
                     match = ip_pattern.search(line)
                     if match:
                         ip = match.group(1)
                         failed_attempts[ip] += 1
-                        print(f"[DEBUG] Found attempt from {ip}")
+                        print(f"[DEBUG] Found failed attempt from {ip}")
+    except FileNotFoundError:
+        print(f"[ERROR] Log file not found: {log_file_path}")
+        return []
     except Exception as e:
-        print(f"Error reading log: {e}")
+        print(f"[ERROR] Reading log file failed: {type(e).__name__}: {e}")
         return []
 
-    # Build results
+    # Build results list for dashboard
     results = []
     for ip, count in failed_attempts.items():
         if count >= threshold:
             mitre = MITRE_ATTACK["SSH_BRUTE_FORCE"]
-            results.append({
+            entry = {
                 "ip": ip,
                 "count": count,
                 "tactic": mitre["tactic"],
                 "technique": mitre["technique"],
                 "sub_technique": mitre["sub_technique"]
-            })
+            }
+            results.append(entry)
+
+            # Trigger alert and block
             write_alert(ip, count, mitre["tactic"], mitre["sub_technique"])
             block_ip(ip)
 
