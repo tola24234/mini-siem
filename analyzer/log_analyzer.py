@@ -44,29 +44,55 @@ def analyze_logs(log_file_path=None, threshold=None):
     print(f"[DEBUG] Attempting to read log file: {log_file_path}")
 
     if threshold is None:
-        threshold = config.getint("SIEM", "THRESHOLD", fallback=5)
+        threshold = config.getint("SIEM", "THRESHOLD", fallback=3)  # lowered for easier testing
 
     failed_attempts = defaultdict(int)
-    ip_pattern = re.compile(r'from\s+([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})')
+    # Improved regex: matches common auth.log format like:
+    # ... sshd[...]: Failed password for invalid user abc from 1.2.3.4 port 12345 ssh2
+    ip_pattern = re.compile(r'from\s+([0-9]{1,3}(?:\.[0-9]{1,3}){3})\b')
+
+    line_count = 0
+    failed_count = 0
+    matched_count = 0
+    sample_failed_lines = []
 
     try:
         with open(log_file_path, "r", encoding="utf-8", errors="ignore") as file:
             for line in file:
                 line = line.strip()
+                line_count += 1
                 if not line:
                     continue
                 if "Failed password" in line:
+                    failed_count += 1
+                    # Keep first few samples for debug
+                    if len(sample_failed_lines) < 5:
+                        sample_failed_lines.append(line[:180] + ("..." if len(line) > 180 else ""))
+
                     match = ip_pattern.search(line)
                     if match:
                         ip = match.group(1)
                         failed_attempts[ip] += 1
-                        print(f"[DEBUG] Found failed attempt from {ip}")
+                        matched_count += 1
+                        print(f"[DEBUG] Found failed attempt from {ip} | Line excerpt: {line[:80]}...")
+                    else:
+                        print(f"[DEBUG] 'Failed password' found but NO IP match: {line[:80]}...")
+
     except FileNotFoundError:
         print(f"[ERROR] Log file not found: {log_file_path}")
         return []
     except Exception as e:
         print(f"[ERROR] Reading log file failed: {type(e).__name__}: {e}")
         return []
+
+    # Debug summary
+    print(f"[DEBUG] Total lines read: {line_count}")
+    print(f"[DEBUG] Lines containing 'Failed password': {failed_count}")
+    print(f"[DEBUG] Lines with matched IP: {matched_count}")
+    if sample_failed_lines:
+        print("[DEBUG] Sample 'Failed password' lines (first 5):")
+        for sample in sample_failed_lines:
+            print(f"  → {sample}")
 
     # Build results list for dashboard
     results = []
@@ -86,5 +112,5 @@ def analyze_logs(log_file_path=None, threshold=None):
             write_alert(ip, count, mitre["tactic"], mitre["sub_technique"])
             block_ip(ip)
 
-    print(f"[DEBUG] Detected {len(results)} suspicious IPs")
+    print(f"[DEBUG] Detected {len(results)} suspicious IPs (threshold ≥ {threshold})")
     return results
