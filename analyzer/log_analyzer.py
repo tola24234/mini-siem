@@ -113,4 +113,24 @@ def analyze_logs(log_file_path=None, threshold=None):
             block_ip(ip)
 
     print(f"[DEBUG] Detected {len(results)} suspicious IPs (threshold ≥ {threshold})")
+    # ────────────────────────────────────────────────
+    # TEMP: FORCE VISIBLE DETECTION TO CONFIRM DASHBOARD WORKS
+    # Remove or comment out after testing
+    force_test = True  # ← set to False later to disable
+    if force_test:
+        test_ip = "203.0.113.197"  # example IP (TEST-NET-3, safe)
+        test_count = 12
+        mitre = MITRE_ATTACK["SSH_BRUTE_FORCE"]
+        entry = {
+            "ip": test_ip,
+            "count": test_count,
+            "tactic": mitre["tactic"],
+            "technique": mitre["technique"],
+            "sub_technique": mitre["sub_technique"]
+        }
+        results.append(entry)
+        write_alert(test_ip, test_count, mitre["tactic"], mitre["sub_technique"])
+        block_ip(test_ip)
+        print(f"[DEBUG] FORCE TEST ADDED: {test_ip} with {test_count} attempts")
+    # ────────────────────────────────────────────────
     return results
