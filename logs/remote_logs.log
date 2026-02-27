@@ -1,0 +1,20 @@
+{'event':'failed login','ip':'10.0.0.5'}
+{'timestamp': '2026-02-19 12:49:26.729281', 'source': 'server1', 'event': 'failed login', 'ip': '192.168.1.5'}
+{'timestamp': '2026-02-19 12:53:09.019848', 'source': 'server1', 'event': 'failed login', 'ip': '192.168.1.5'}
+{'event':'failed login','ip':'192.168.1.5'}
+{'event':'failed login','ip':'192.168.1.5'}
+{'event':'failed login','ip':'192.168.1.5'}
+{'event':'failed login','ip':'192.168.1.10'}
+{'event':'failed login','ip':'192.168.1.10'}
+{'event':'failed login','ip':'192.168.1.10'}
+{'event':'sudo access','ip':'192.168.1.10'}
+{'event':'failed login','ip':'192.168.1.50'}
+{'event':'sudo access','ip':'192.168.1.50'}
+{'event':'failed login','ip':'192.168.1.50'}
+{'event':'sudo access','ip':'192.168.1.50'}
+{'event':'failed login','ip':'192.168.1.50'}
+{'event':'sudo access','ip':'192.168.1.50'}
+{'event':'failed login','ip':'192.168.1.55'}
+{'event':'sudo access','ip':'192.168.1.55'}
+{'event':'failed login','ip':'192.168.1.100'}
+{'event':'sudo access','ip':'192.168.1.100'}

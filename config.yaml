@@ -1,0 +1,8 @@
+# config.yaml
+brute_force_threshold: 3
+correlation_window_minutes: 10
+alert_levels:
+  brute_force: High
+  attack_chain: Critical
+log_sources:
+  - logs/remote_logs.log

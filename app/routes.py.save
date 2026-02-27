@@ -1,0 +1,5 @@
+@main.route("/")
+def dashboard():
+    alerts = Alert.query.all()
+    total_alerts = len(alerts)
+    return render_template("dashboard.html", total_alerts=total_alerts, alerts=alerts)
