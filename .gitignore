@@ -1,0 +1,28 @@
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+
+# Database / Instance Files
+instance/
+*.db
+
+# Logs
+*.log
+logs/
+
+# System Files
+.DS_Store
+
+# IDE Files
+.idea/
+.vscode/
+
+# Temporary Files
+*.swp
+*.swo
