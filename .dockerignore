@@ -1,4 +1,8 @@
-venv/
+__pycache__
+venv
+.git
+logs
+instancevenv/
 __pycache__/
 *.pyc
 .git

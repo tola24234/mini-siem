@@ -1,11 +1,14 @@
-FROM python:3.13-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY . .
+COPY . /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-EXPOSE 5000
+ENV PYTHONPATH=/app
 
-CMD ["python3", "-m", "web.app"]
+EXPOSE 5001
+
+CMD ["python", "dashboard/app.py"]
