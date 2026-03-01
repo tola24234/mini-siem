@@ -1,5 +1,6 @@
 # 🛡️ Mini-SIEM – Lightweight Security Monitoring System
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue?style=for-the-badge&logo=docker)
+![Docker](https://img.shields.io/badge/Docker-Enabled-blue?style=for-the-badge&logo=docker)
 ![Python](https://img.shields.io/badge/Python-%3E%3D3.10-blue?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-%3E%3D3.0-lightgrey?style=for-the-badge&logo=flask)
 ![MIT License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)

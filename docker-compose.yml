@@ -3,6 +3,7 @@ version: "3.9"
 services:
   mini-siem:
     build: .
+    container_name: mini-siem-security
     ports:
       - "5001:5001"
     restart: unless-stopped
