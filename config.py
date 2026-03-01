@@ -1,13 +1,36 @@
-# config.py
+# ============================================
+# Mini-SIEM Configuration File
+# ============================================
 
-# --- Mini-SIEM main settings ---
+import os
+
+# ============================================
+# Core SIEM Settings
+# ============================================
+
+# Log source (change to test_auth.log for testing)
 LOG_FILE = "/var/log/auth.log"
-ENFORCE_BLOCKING = False  # True = actually block IPs
-BRUTE_FORCE_THRESHOLD = 5
-BRUTE_FORCE_WINDOW = 60
 
-# --- Flask / Database settings ---
+# Enable real firewall blocking (use False for safety)
+ENFORCE_BLOCKING = False
+
+# Brute force detection settings
+BRUTE_FORCE_THRESHOLD = 5      # Failed attempts before alert
+BRUTE_FORCE_WINDOW = 60        # Time window in seconds
+
+
+# ============================================
+# Flask & Database Configuration
+# ============================================
+
 class Config:
-    SECRET_KEY = "supersecretkey"
-    SQLALCHEMY_DATABASE_URI = "sqlite:///siem.db"
+    # Security key (change in production)
+    SECRET_KEY = os.environ.get("SECRET_KEY", "supersecretkey")
+
+    # Use only ONE database file
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        "DATABASE_URL",
+        "sqlite:///siem.db"
+    )
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
