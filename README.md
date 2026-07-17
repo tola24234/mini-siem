@@ -1,89 +1,336 @@
-# 🛡️ Mini-SIEM – Lightweight Security Monitoring System
+# Mini-SIEM: Real-Time Security Monitoring & Detection Engine
 
-[![Docker](https://img.shields.io/badge/Docker-Enabled-blue?style=for-the-badge&logo=docker)](https://www.docker.com/)
-[![Python](https://img.shields.io/badge/Python-%3E%3D3.10-blue?style=for-the-badge&logo=python)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-%3E%3D3.0-lightgrey?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-blue?style=for-the-badge)](https://attack.mitre.org/)
+![Mini-SIEM Banner](screenshots/dashboard.png)
 
-A lightweight **Security Information and Event Management (SIEM)** prototype built in Python + Flask.  
-Designed to showcase **detection engineering**, log analysis, threat mapping, and basic SOC workflows.
+## Overview
 
-## 📌 Project Overview
+Mini-SIEM is a lightweight Security Information and Event Management (SIEM) platform designed to collect security events, detect suspicious activities, generate alerts, and visualize security incidents through a dashboard.
 
-Mini-SIEM monitors Linux authentication logs (e.g., `/var/log/auth.log` or custom files), detects **SSH brute-force attacks** using configurable thresholds, maps detections to the **MITRE ATT&CK** framework (T1110.001 – Password Guessing), generates real-time alerts, simulates IP blocking, and visualizes everything in a clean web dashboard.
+The project demonstrates core SOC (Security Operations Center) concepts:
 
-Great for learning SIEM basics, practicing Python security tooling, or demonstrating skills in junior SOC analyst, detection engineer, or DevSecOps roles.
+* Real-time log monitoring
+* SSH brute-force detection
+* MITRE ATT&CK mapping
+* Risk scoring
+* Alert database storage
+* Security dashboard visualization
+* Automated threat detection workflow
 
-## 🚀 Live Demo
+## Live Demo
 
-👉 **[https://mini-siem.onrender.com/](https://mini-siem.onrender.com/)**
+🌐 Dashboard:
 
-⚠ **Notes**:
-- Free Render tier → may sleep after ~15 min inactivity (first load: 10–30 seconds).
-- Refresh the page to trigger log re-analysis on demo data.
-- Currently shows **0 alerts** (clean demo logs) — add test brute-force entries locally to see detections in action.
+https://mini-siem.onrender.com/
 
-## 🎯 Key Features
+### Demo Notes
 
-- 📂 Real-time Linux auth log monitoring & parsing
-- 🔍 SSH brute-force detection (failed login threshold + time window)
-- 🧠 MITRE ATT&CK mapping  
-  - Tactic: Credential Access  
-  - Technique: T1110 – Brute Force  
-  - Sub-technique: T1110.001 – Password Guessing
-- 🚨 Alert generation (console, file-based, severity levels)
-- 📊 Responsive Flask web dashboard (alerts, suspicious IPs, blocked list)
-- 🌐 Basic REST API endpoint for external log ingestion
-- 🛑 Simulated IP blocking (easy to extend to iptables/firewalld)
-- 📦 Modular architecture (collector → analyzer → engine → dashboard)
-- 🐳 Docker support + deployment-ready
+* The free Render deployment may sleep after approximately 15 minutes of inactivity.
+* The first page load may take 10–30 seconds.
+* Refresh the dashboard to trigger demo log analysis.
+* The hosted demo uses clean sample logs, so it may initially show **0 alerts**.
+* To see brute-force detection locally, add failed SSH login events and run the real-time collector.
 
-## 📂 Architecture
+---
 
+# Architecture
+
+```
+                 +----------------+
+                 | System Logs    |
+                 | SSH / Journal  |
+                 +-------+--------+
+                         |
+                         |
+                         v
+              +---------------------+
+              | Real-Time Collector |
+              | journalctl Monitor |
+              +----------+----------+
+                         |
+                         |
+                         v
+              +---------------------+
+              | Detection Engine    |
+              | Brute Force Rules  |
+              | MITRE Mapping      |
+              +----------+----------+
+                         |
+                         |
+                         v
+              +---------------------+
+              | Risk Analysis       |
+              | Severity Scoring   |
+              +----------+----------+
+                         |
+                         |
+                         v
+              +---------------------+
+              | Alert Manager       |
+              | SQLite Database    |
+              +----------+----------+
+                         |
+                         |
+                         v
+              +---------------------+
+              | Flask Dashboard     |
+              | Alert Visualization |
+              +---------------------+
+```
+
+---
+
+# Project Structure
+
+```
 mini-siem/
-├── analyzer/          # Detection rules & MITRE mapping logic
-├── collector/         # Log file/tail collection & parsing
-├── dashboard/         # Flask app, templates, routes
-├── engine/            # Core correlation & alerting
-├── models/            # Data structures (alerts, events)
-├── data/              # Sample logs (auth_logs.txt)
-├── alerts/            # Output alert files
-├── screenshots/       # Demo images
-├── config.py          # Central configuration
+│
+├── alerts/
+│   └── alert_manager.py
+│
+├── collector/
+│   ├── realtime_collector.py
+│   └── realtime_monitor.py
+│
+├── engine/
+│   └── detection_rules.py
+│
+├── models/
+│   └── alert_model.py
+│
+├── dashboard/
+│   └── app.py
+│
+├── analyzer/
+│   ├── alert_cache.py
+│   ├── bruteforce_detector.py
+│   └── correlation_engine.py
+│
+├── instance/
+│   └── siem.db
+│
+├── run_mini_siem.py
 ├── requirements.txt
-├── run.sh
-├── Dockerfile
-├── .github/workflows/ # CI (Docker build)
-└── README.md 
+└── README.md
+```
 
-## ⚙️ Quick Start (Installation)
+---
 
-### Prerequisites
-- Python 3.10+
-- Git
-- (Optional) Docker
+# Installation
 
-### Local Setup (Recommended)
+## 1. Clone Repository
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/tola24234/mini-siem.git
-   cd mini-siem
-Create & activate virtual environment:
-   Bash
+```bash
+git clone https://github.com/tola24234/mini-siem.git
 
-    &nbsp;&nbsp;&nbsp;python -m venv venv &nbsp;&nbsp;&nbsp;source venv/bin/activate          # Windows: venv\Scripts\activate &nbsp;&nbsp;&nbsp;
+cd mini-siem
+```
 
-Install dependencies:
-   Bash
+---
 
-    &nbsp;&nbsp;&nbsp;pip install -r requirements.txt &nbsp;&nbsp;&nbsp;
+## 2. Create Virtual Environment
 
-Run the SIEM:
-   Bash
+```bash
+python -m venv venv
+```
 
-    &nbsp;&nbsp;&nbsp;python run_mini_siem.py &nbsp;&nbsp;&nbsp;# OR &nbsp;&nbsp;&nbsp;./run.sh &nbsp;&nbsp;&nbsp;
-Docker Setup
-Bashdocker build -t mini-siem .
-docker run -p 5000:5000 mini-siem
+Activate:
+
+### Linux / Kali Linux
+
+```bash
+source venv/bin/activate
+```
+
+---
+
+## 3. Install Requirements
+
+```bash
+pip install -r requirements.txt
+```
+
+Required packages include:
+
+* Flask
+* Flask-SQLAlchemy
+* PyYAML
+* Other SIEM dependencies
+
+---
+
+# Database Setup
+
+Remove old database if needed:
+
+```bash
+rm -f instance/siem.db
+```
+
+The database will automatically store detected security alerts.
+
+Check alerts:
+
+```bash
+sqlite3 instance/siem.db "SELECT * FROM alert;"
+```
+
+Example output:
+
+```
+1|2026-07-17|127.0.0.1|SSH Brute Force Attempt|HIGH|Detected failed SSH login attempts|T1110
+```
+
+---
+
+# Running Mini-SIEM
+
+## 1. Start Real-Time Security Collector
+
+The collector monitors SSH authentication logs using journalctl.
+
+Run:
+
+```bash
+python -m collector.realtime_monitor
+```
+
+Example:
+
+```
+🔥 Mini SIEM Real-time Monitor Started
+
+[EVENT] sshd Failed password for invalid user fakeuser from 127.0.0.1
+
+[FAILED LOGIN] IP=127.0.0.1 Attempts=5
+
+🚨 SECURITY ALERT DETECTED
+
+Attack Type : SSH Brute Force Attempt
+Severity    : HIGH
+MITRE ID    : T1110
+Risk Score  : 70
+
+[+] Alert saved to database
+```
+
+---
+
+## 2. Run Dashboard
+
+Open another terminal:
+
+```bash
+python -m dashboard.app
+```
+
+Open browser:
+
+```
+http://127.0.0.1:5001
+```
+
+Dashboard displays:
+
+* Detected attacks
+* Source IP addresses
+* Severity levels
+* MITRE techniques
+* Alert history
+
+---
+
+# Detection Examples
+
+## SSH Brute Force Detection
+
+The SIEM detects repeated failed SSH authentication attempts.
+
+Example attack simulation:
+
+```bash
+ssh fakeuser@127.0.0.1
+```
+
+After multiple failed passwords:
+
+```
+[FAILED LOGIN] IP=127.0.0.1 Attempts=5
+
+🚨 SECURITY ALERT DETECTED
+
+Attack Type : SSH Brute Force Attempt
+Severity    : HIGH
+MITRE ID    : T1110
+Risk Score  : 70
+```
+
+---
+
+# MITRE ATT&CK Mapping
+
+Detected techniques:
+
+| Attack          | MITRE ID |
+| --------------- | -------- |
+| SSH Brute Force | T1110    |
+
+---
+
+# Screenshots
+
+## Dashboard
+
+Add screenshots here:
+
+```
+screenshots/dashboard.png
+```
+
+Example:
+
+![Dashboard](screenshots/dashboard.png)
+
+---
+
+# Technologies Used
+
+* Python
+* Flask
+* Flask-SQLAlchemy
+* SQLite
+* Linux journalctl
+* SSH monitoring
+* MITRE ATT&CK Framework
+* Git & GitHub
+
+---
+
+# Future Improvements
+
+Planned features:
+
+* Email alert notifications
+* IP reputation checking
+* More attack detection rules
+* User authentication
+* Docker deployment
+* Machine learning anomaly detection
+* Full SOC dashboard metrics
+
+---
+
+# Author
+
+**Tola Feyisa**
+
+Cybersecurity Student | Security Researcher
+
+GitHub:
+
+https://github.com/tola24234
+
+---
+
+# License
+
+This project is for educational and cybersecurity research purposes.
