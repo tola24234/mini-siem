@@ -276,11 +276,9 @@ Detected techniques:
 
 ---
 
-# Screenshots
 
 ## Dashboard
 
-Add screenshots here:
 
 ```
 screenshots/dashboard.png
