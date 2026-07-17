@@ -1,3 +1,13 @@
+# Mini-SIEM
+
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
+
+**A lightweight Real-Time Security Information and Event Management (SIEM) system focused on SSH brute-force detection and log monitoring.**
+
+---
+
+## ✨ Features
 # Mini-SIEM: Real-Time Security Monitoring & Detection Engine
 
 ![Mini-SIEM Banner](screenshots/dashboard.png)
