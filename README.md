@@ -280,7 +280,7 @@ Detected techniques:
 
 ## Dashboard
 
-Add screenshots here:
+
 
 ```
 screenshots/dashboard.png
