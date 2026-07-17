@@ -1,27 +1,65 @@
-import os
+from datetime import datetime
+from models.alert_model import db, Alert
 
-ALERT_FILE = "alerts/alerts.log"
 
 def save_alert(alert_data):
     """
-    Save detection alert to log storage
+    Save SIEM alert into database
     """
 
     try:
-        os.makedirs("alerts", exist_ok=True)
 
-        attack_type = alert_data.get("attack_type", "UNKNOWN")
-        severity = alert_data.get("severity", "LOW")
-        mitre_id = alert_data.get("mitre_id", "N/A")
-        source_ip = alert_data.get("source_ip", "UNKNOWN")
+        alert = Alert(
 
-        with open(ALERT_FILE, "a") as f:
-            f.write(
-                f"{attack_type} | "
-                f"{severity} | "
-                f"{mitre_id} | "
-                f"{source_ip}\n"
+            timestamp=str(datetime.now()),
+
+            source_ip=alert_data.get(
+                "source_ip",
+                "UNKNOWN"
+            ),
+
+            event_type=alert_data.get(
+                "attack_type",
+                "UNKNOWN"
+            ),
+
+            severity=alert_data.get(
+                "severity",
+                "LOW"
+            ),
+
+            description=alert_data.get(
+                "description",
+                "Security event detected"
+            ),
+
+            attack_type=alert_data.get(
+                "attack_type",
+                "UNKNOWN"
+            ),
+
+            mitre_id=alert_data.get(
+                "mitre_id",
+                "N/A"
             )
+        )
+
+
+        db.session.add(alert)
+
+        db.session.commit()
+
+
+        print(
+            "[+] Alert saved to database"
+        )
+
 
     except Exception as e:
-        print("Alert saving error:", e)
+
+        db.session.rollback()
+
+        print(
+            "Alert database error:",
+            e
+        )

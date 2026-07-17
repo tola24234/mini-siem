@@ -6,6 +6,7 @@ from dashboard.app import app
 from analyzer.bruteforce_detector import detect_bruteforce
 from analyzer.correlation_engine import correlate_events
 from analyzer.anomaly_detector import detect_anomaly
+from analyzer.alert_cache import is_duplicate
 
 from firewall_block import block_ip
 from alerts.alert_manager import save_alert
@@ -36,7 +37,9 @@ def run_detection_loop():
 
             for log_file in LOG_FILES:
 
-                print(f"[INFO] Scanning {log_file}")
+                print(
+                    f"[INFO] Scanning {log_file}"
+                )
 
 
                 # =========================
@@ -55,21 +58,33 @@ def run_detection_loop():
 
                         ip = alert.split()[-1]
 
+
+                        # Prevent duplicate alerts
+                        if is_duplicate(ip):
+
+                            continue
+
+
                         malicious_ips.append(ip)
 
 
                         # Save alert into database
+
                         with app.app_context():
 
                             save_alert({
 
-                                "attack_type": "SSH Brute Force",
+                                "attack_type":
+                                "SSH Brute Force",
 
-                                "severity": "HIGH",
+                                "severity":
+                                "HIGH",
 
-                                "mitre_id": "T1110",
+                                "mitre_id":
+                                "T1110",
 
-                                "source_ip": ip,
+                                "source_ip":
+                                ip,
 
                                 "description":
                                 "Multiple failed SSH login attempts detected"
@@ -77,11 +92,14 @@ def run_detection_loop():
                             })
 
 
+
                 # =========================
                 # Event Correlation
                 # =========================
 
-                chain_alerts = correlate_events(log_file)
+                chain_alerts = correlate_events(
+                    log_file
+                )
 
 
                 for alert in chain_alerts:
@@ -94,7 +112,9 @@ def run_detection_loop():
                 # Anomaly Detection
                 # =========================
 
-                anomaly_alerts = detect_anomaly(log_file)
+                anomaly_alerts = detect_anomaly(
+                    log_file
+                )
 
 
                 for alert in anomaly_alerts:
@@ -109,11 +129,15 @@ def run_detection_loop():
 
             for ip in set(malicious_ips):
 
-                print(f"[INFO] Blocking {ip}")
+                print(
+                    f"[INFO] Blocking {ip}"
+                )
 
                 block_ip(ip)
 
 
+
+            # Check every 2 seconds
 
             time.sleep(2)
 
@@ -121,7 +145,9 @@ def run_detection_loop():
 
         except KeyboardInterrupt:
 
-            print("\n[INFO] Detection engine stopped.")
+            print(
+                "\n[INFO] Detection engine stopped."
+            )
 
             break
 
@@ -129,7 +155,9 @@ def run_detection_loop():
 
         except Exception as e:
 
-            print(f"[ERROR] {e}")
+            print(
+                f"[ERROR] {e}"
+            )
 
             time.sleep(2)
 
@@ -138,3 +166,4 @@ def run_detection_loop():
 if __name__ == "__main__":
 
     run_detection_loop()
+
