@@ -3,7 +3,10 @@
 # ============================================
 
 import os
+
 from flask import Flask, jsonify, render_template
+from sqlalchemy import func
+
 from config import Config
 from models.alert_model import db, Alert
 
@@ -50,25 +53,69 @@ def dashboard():
 
 
 # --------------------------------------------
-# API Endpoint (JSON Alerts)
+# Alerts JSON API
 # --------------------------------------------
 
 @app.route("/api/alerts")
-def get_alerts():
+def api_alerts():
 
-    alerts = Alert.query.order_by(Alert.id.desc()).limit(50).all()
+    alerts = Alert.query.order_by(Alert.id.desc()).limit(100).all()
 
-    return jsonify([
-        {
-            "id": a.id,
-            "timestamp": str(a.timestamp),
-            "source_ip": a.source_ip,
-            "event_type": a.event_type,
-            "severity": a.severity,
-            "description": a.description,
-        }
-        for a in alerts
-    ])
+    return jsonify({
+        "high": Alert.query.filter_by(severity="HIGH").count(),
+        "medium": Alert.query.filter_by(severity="MEDIUM").count(),
+        "low": Alert.query.filter_by(severity="LOW").count(),
+        "total": Alert.query.count(),
+        "alerts": [
+            {
+                "id": alert.id,
+                "timestamp": alert.timestamp,
+                "source_ip": alert.source_ip,
+                "event_type": alert.event_type,
+                "severity": alert.severity,
+                "description": alert.description
+            }
+            for alert in alerts
+        ]
+    })
+
+
+# --------------------------------------------
+# Dashboard Statistics API
+# --------------------------------------------
+
+@app.route("/api/stats")
+def api_stats():
+
+    # Count alerts by source IP
+    top_ips = (
+        db.session.query(
+            Alert.source_ip,
+            func.count(Alert.id).label("count")
+        )
+        .group_by(Alert.source_ip)
+        .order_by(func.count(Alert.id).desc())
+        .limit(5)
+        .all()
+    )
+
+    return jsonify({
+
+        "severity": {
+            "HIGH": Alert.query.filter_by(severity="HIGH").count(),
+            "MEDIUM": Alert.query.filter_by(severity="MEDIUM").count(),
+            "LOW": Alert.query.filter_by(severity="LOW").count()
+        },
+
+        "top_ips": [
+            {
+                "ip": ip,
+                "count": count
+            }
+            for ip, count in top_ips
+        ]
+
+    })
 
 
 # --------------------------------------------
