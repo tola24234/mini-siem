@@ -4,7 +4,7 @@
 
 import os
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from sqlalchemy import func
 
 from config import Config
@@ -133,6 +133,58 @@ def api_stats():
 
         ]
 
+    })
+
+
+# --------------------------------------------
+# Alert Ingestion API
+# --------------------------------------------
+
+@app.route("/api/ingest", methods=["POST"])
+def ingest_alert():
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({
+            "status": "error",
+            "message": "No JSON received"
+        }), 400
+
+    alert = Alert(
+
+        timestamp=data.get("timestamp"),
+
+        source_ip=data.get("source_ip"),
+
+        country=data.get("country"),
+
+        city=data.get("city"),
+
+        isp=data.get("isp"),
+
+        latitude=data.get("latitude"),
+
+        longitude=data.get("longitude"),
+
+        event_type=data.get("event_type"),
+
+        severity=data.get("severity"),
+
+        description=data.get("description"),
+
+        attack_type=data.get("attack_type"),
+
+        mitre_id=data.get("mitre_id")
+
+    )
+
+    db.session.add(alert)
+    db.session.commit()
+
+    return jsonify({
+        "status": "success",
+        "message": "Alert received successfully"
     })
 
 
