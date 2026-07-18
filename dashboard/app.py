@@ -21,7 +21,6 @@ app = Flask(
 
 app.config.from_object(Config)
 
-# Initialize Database
 db.init_app(app)
 
 with app.app_context():
@@ -37,18 +36,13 @@ def dashboard():
 
     alerts = Alert.query.order_by(Alert.id.desc()).limit(100).all()
 
-    high_count = Alert.query.filter_by(severity="HIGH").count()
-    medium_count = Alert.query.filter_by(severity="MEDIUM").count()
-    low_count = Alert.query.filter_by(severity="LOW").count()
-    total_count = Alert.query.count()
-
     return render_template(
         "dashboard.html",
         alerts=alerts,
-        high_count=high_count,
-        medium_count=medium_count,
-        low_count=low_count,
-        total_count=total_count
+        high_count=Alert.query.filter_by(severity="HIGH").count(),
+        medium_count=Alert.query.filter_by(severity="MEDIUM").count(),
+        low_count=Alert.query.filter_by(severity="LOW").count(),
+        total_count=Alert.query.count()
     )
 
 
@@ -62,21 +56,41 @@ def api_alerts():
     alerts = Alert.query.order_by(Alert.id.desc()).limit(100).all()
 
     return jsonify({
+
         "high": Alert.query.filter_by(severity="HIGH").count(),
         "medium": Alert.query.filter_by(severity="MEDIUM").count(),
         "low": Alert.query.filter_by(severity="LOW").count(),
         "total": Alert.query.count(),
+
         "alerts": [
+
             {
+
                 "id": alert.id,
                 "timestamp": alert.timestamp,
+
                 "source_ip": alert.source_ip,
+
+                "country": alert.country,
+                "city": alert.city,
+                "isp": alert.isp,
+
                 "event_type": alert.event_type,
                 "severity": alert.severity,
-                "description": alert.description
+                "description": alert.description,
+
+                "attack_type": alert.attack_type,
+                "mitre_id": alert.mitre_id,
+
+                "latitude": alert.latitude,
+                "longitude": alert.longitude
+
             }
+
             for alert in alerts
+
         ]
+
     })
 
 
@@ -87,7 +101,6 @@ def api_alerts():
 @app.route("/api/stats")
 def api_stats():
 
-    # Count alerts by source IP
     top_ips = (
         db.session.query(
             Alert.source_ip,
@@ -102,17 +115,22 @@ def api_stats():
     return jsonify({
 
         "severity": {
+
             "HIGH": Alert.query.filter_by(severity="HIGH").count(),
             "MEDIUM": Alert.query.filter_by(severity="MEDIUM").count(),
             "LOW": Alert.query.filter_by(severity="LOW").count()
+
         },
 
         "top_ips": [
+
             {
                 "ip": ip,
                 "count": count
             }
+
             for ip, count in top_ips
+
         ]
 
     })
@@ -123,6 +141,7 @@ def api_stats():
 # --------------------------------------------
 
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
         port=5001,

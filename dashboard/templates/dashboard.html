@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mini SIEM Dashboard</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -86,6 +85,7 @@
 
     </div>
 
+    <!-- Top Attacking IPs -->
     <div class="row mb-4">
 
         <div class="col-12">
@@ -101,56 +101,79 @@
 
     </div>
 
-    <!-- Alert Table -->
-    <table class="table table-dark table-striped table-hover">
+    <!-- Live Alerts -->
+    <div class="card bg-secondary mb-4">
 
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Timestamp</th>
-                <th>Source IP</th>
-                <th>Event</th>
-                <th>Severity</th>
-                <th>Description</th>
-            </tr>
-        </thead>
+        <div class="card-header text-center">
+            Live Alerts
+        </div>
 
-        <tbody id="alerts-table">
+        <div class="card-body">
 
-        {% for alert in alerts %}
-            <tr>
-                <td>{{ alert.id }}</td>
-                <td>{{ alert.timestamp }}</td>
-                <td>{{ alert.source_ip }}</td>
-                <td>{{ alert.event_type }}</td>
+            <div class="table-responsive">
 
-                <td>
-                    {% if alert.severity == "HIGH" %}
-                        <span class="badge bg-danger">HIGH</span>
-                    {% elif alert.severity == "MEDIUM" %}
-                        <span class="badge bg-warning text-dark">MEDIUM</span>
-                    {% else %}
-                        <span class="badge bg-success">LOW</span>
-                    {% endif %}
-                </td>
+                <table class="table table-dark table-striped table-hover align-middle">
 
-                <td>{{ alert.description }}</td>
-            </tr>
-        {% endfor %}
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Timestamp</th>
+                            <th>Source IP</th>
+                            <th>Country</th>
+                            <th>City</th>
+                            <th>ISP</th>
+                            <th>Event</th>
+                            <th>Severity</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
 
-        </tbody>
+                    <tbody id="alerts-table">
 
-    </table>
+                    {% for alert in alerts %}
+
+                        <tr>
+
+                            <td>{{ alert.id }}</td>
+                            <td>{{ alert.timestamp }}</td>
+                            <td>{{ alert.source_ip }}</td>
+                            <td>{{ alert.country }}</td>
+                            <td>{{ alert.city }}</td>
+                            <td>{{ alert.isp }}</td>
+                            <td>{{ alert.event_type }}</td>
+
+                            <td>
+                                {% if alert.severity == "HIGH" %}
+                                    <span class="badge bg-danger">HIGH</span>
+                                {% elif alert.severity == "MEDIUM" %}
+                                    <span class="badge bg-warning text-dark">MEDIUM</span>
+                                {% else %}
+                                    <span class="badge bg-success">LOW</span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ alert.description }}</td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Charts -->
 <script src="{{ url_for('static', filename='charts.js') }}"></script>
 
-<!-- Dashboard -->
 <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 
 </body>
