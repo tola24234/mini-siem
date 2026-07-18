@@ -10,7 +10,6 @@
 ## ✨ Features
 # Mini-SIEM: Real-Time Security Monitoring & Detection Engine
 
-![Mini-SIEM Banner](screenshots/dashboard.png)
 
 ## Overview
 
@@ -30,16 +29,16 @@ The project demonstrates core SOC (Security Operations Center) concepts:
 
 🌐 Dashboard:
 
-https://mini-siem.onrender.com/
+http://172.20.72.191:5001
 
 ### Demo Notes
 
 * The free Render deployment may sleep after approximately 15 minutes of inactivity.
 * The first page load may take 10–30 seconds.
-* Refresh the dashboard to trigger demo log analysis.
-* The hosted demo uses clean sample logs, so it may initially show **0 alerts**.
-* To see brute-force detection locally, add failed SSH login events and run the real-time collector.
-
+* Refresh the dashboard to load the hosted demo data.
+* The hosted demo runs in a cloud environment and does not access local machine logs.
+* The hosted demo may initially show 0 alerts if no sample events are loaded.
+* To test real-time brute-force detection, run the project locally inside a Python virtual environment and provide failed SSH login events from the local system.
 ---
 
 # Architecture
