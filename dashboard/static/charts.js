@@ -4,6 +4,7 @@
 
 let severityChart = null;
 let ipChart = null;
+let timelineChart = null;
 
 async function loadCharts() {
 
@@ -150,6 +151,46 @@ async function loadCharts() {
 
             }
 
+        });
+
+        // ==========================
+        // Alerts Over Time
+        // ==========================
+
+        const timelineCtx = document
+            .getElementById("timelineChart")
+            .getContext("2d");
+
+        if (timelineChart) {
+            timelineChart.destroy();
+        }
+
+        timelineChart = new Chart(timelineCtx, {
+            type: "line",
+            data: {
+                labels: data.alerts_by_day.map(item => item.date),
+                datasets: [{
+                    label: "Alerts",
+                    data: data.alerts_by_day.map(item => item.count),
+                    borderColor: "#0dcaf0",
+                    backgroundColor: "rgba(13, 202, 240, 0.2)",
+                    fill: true,
+                    tension: 0.25
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: "white" } }
+                },
+                scales: {
+                    x: { ticks: { color: "white" } },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: "white", precision: 0 }
+                    }
+                }
+            }
         });
 
     } catch (err) {

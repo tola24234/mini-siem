@@ -13,9 +13,13 @@
 
 <div class="container mt-5">
 
-    <h2 class="text-center mb-4">
-        🔥 Mini SIEM Security Dashboard
-    </h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">🔥 Mini SIEM Security Dashboard</h2>
+        <form action="{{ url_for('logout') }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-outline-light btn-sm" type="submit">Sign out {{ current_user.username }}</button>
+        </form>
+    </div>
 
     <!-- Alert Counters -->
     <div class="row mb-4">
@@ -109,6 +113,18 @@
         </div>
 
         <div class="card-body">
+
+            <div class="mb-3">
+                <label class="form-label" for="alert-search">Search alert logs</label>
+                <input
+                    class="form-control"
+                    id="alert-search"
+                    type="search"
+                    placeholder="IP, event, description, MITRE ID, country, city, or ISP"
+                    autocomplete="off"
+                >
+                <div class="form-text text-light" id="search-summary" aria-live="polite"></div>
+            </div>
 
             <div class="table-responsive">
 
